@@ -1,0 +1,4 @@
+#get user
+
+GET http://localhost:3333/users/me HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidGVzdDFAdGVzdC50ZXN0IiwiaWF0IjoxNzEwMDc4MTk5LCJleHAiOjE3MTAwNzkwOTl9.eL-_sQXDpuBVvAB6hreFq6XjRBaB4vRIahLrM5eUsJM
