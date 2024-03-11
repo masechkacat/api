@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { AuthDto } from '../src/auth/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { EditUserDto } from '../src/user/dto';
+import { readFile } from 'fs/promises';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -32,6 +33,7 @@ describe('App e2e', () => {
   afterAll(async () => {
     await app.close();
   });
+
   describe('Auth', () => {
     const dto: AuthDto = {
       email: 'vlad@gmail.com',
@@ -57,17 +59,15 @@ describe('App e2e', () => {
           .expectStatus(400);
       });
       it('should throw if no body provided', () => {
-        return pactum
-          .spec()
-          .post('/auth/signup')
-          .expectStatus(400);
+        return pactum.spec().post('/auth/signup').expectStatus(400);
       });
       it('should signup', () => {
         return pactum
           .spec()
           .post('/auth/signup')
           .withBody(dto)
-          .expectStatus(201);
+          .expectStatus(201)
+          .stores('userId', 'userId');
       });
     });
 
@@ -91,10 +91,7 @@ describe('App e2e', () => {
           .expectStatus(400);
       });
       it('should throw if no body provided', () => {
-        return pactum
-          .spec()
-          .post('/auth/signin')
-          .expectStatus(400);
+        return pactum.spec().post('/auth/signin').expectStatus(400);
       });
       it('should signin', () => {
         return pactum
@@ -120,6 +117,20 @@ describe('App e2e', () => {
       });
     });
 
+    describe('Get user by id', () => {
+      it('should get user by id', () => {
+        return pactum
+          .spec()
+          .get('/users/{userId}')
+          .withPathParams('userId', '$S{userId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{userId}');
+      });
+    });
+
     describe('Edit user', () => {
       it('should edit user', () => {
         const dto: EditUserDto = {
@@ -138,4 +149,25 @@ describe('App e2e', () => {
           .expectBodyContains(dto.email);
       });
     });
+
+    describe('Upload avatar', () => {
+      it('should upload a profile image', async () => {
+        const fileContent = await readFile(
+          '/Users/user/Desktop/THP/projet final/server/api/img/avatar.jpeg',
+        );
+
+        return pactum
+          .spec()
+          .post('/users/upload')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withMultiPartFormData('file', fileContent, {
+            filename: 'avatar.jpeg',
+            contentType: 'image/jpeg',
+          })
+          .expectStatus(201);
+      });
+    });
   });
+});

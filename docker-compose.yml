@@ -26,3 +26,4 @@ services:
       - sfd_test_data:/var/lib/postgresql/data
 volumes:
   sfd_data:
+  sfd_test_data:

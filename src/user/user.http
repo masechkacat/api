@@ -7,8 +7,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsI
 
 #get user by id
 
-GET http://localhost:3333/users/5 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoidGVzdDFAdGVzdC50ZXN0IiwiaWF0IjoxNzEwMDgyMTA5LCJleHAiOjE3MTAwODMwMDl9.zYF-DwAVLgdczavDuku_r5imEfL1qQW4cWMu0pPj86c
+GET http://localhost:3333/users/7 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImVtYWlsIjoidGVzdDJAdGVzdC50ZXN0IiwiaWF0IjoxNzEwMTQ5ODcwLCJleHAiOjE3MTAxNTA3NzB9.kKWa7oPHCfe9VfdpD2ur3XLzKSGOYMXc3892UIkY704
 
 ###
 
@@ -28,7 +28,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsI
 
 POST http://localhost:3333/users/upload HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImVtYWlsIjoidGVzdDJAdGVzdC50ZXN0IiwiaWF0IjoxNzEwMTA1MDMyLCJleHAiOjE3MTAxMDU5MzJ9.2wErdP9_1jVja0dLUJdDS_NbSx2Ley73_JA5TymFZUk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImVtYWlsIjoidGVzdDJAdGVzdC50ZXN0IiwiaWF0IjoxNzEwMTYyNDIwLCJleHAiOjE3MTAxNjMzMjB9.vLwFDDnHTEyLUF8L3OzXuBbMpbwzn41VsY9SWz4LefU
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="file"; filename="avatar.jpg"
