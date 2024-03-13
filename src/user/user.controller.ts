@@ -16,8 +16,6 @@ import { JwtGuard } from '../auth/guard';
 import { UserService } from './user.service';
 import { EditUserDto } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -61,28 +59,8 @@ export class UserController {
   @ApiOperation({ summary: 'Upload user avatar' })
   @ApiResponse({ status: 201, description: 'Avatar uploaded successfully' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'User Avatar',
-    type: FileUploadDto,
-  })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/profiles',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          return cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
-      },
-    }),
-  )
+  @ApiBody({ description: 'User Avatar', type: FileUploadDto })
+  @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @GetUser('id') userId: number,

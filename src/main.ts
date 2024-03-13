@@ -23,6 +23,7 @@ async function bootstrap() {
       // Create an instance of ValidationPipe
       whitelist: true, // Remove any properties that do not have decorators
       //forbidNonWhitelisted: true, // Throw an error if properties are not whitelisted
+      transform: true, // Automatically transform payloads to DTO objects
     }),
   );
   app.use('/uploads', express.static('uploads'));
