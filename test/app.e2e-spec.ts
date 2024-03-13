@@ -6,6 +6,7 @@ import { AuthDto } from '../src/auth/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { EditUserDto } from '../src/user/dto';
 import { readFile } from 'fs/promises';
+import { CreateGigDto } from 'src/gigs/dto/create-gig.dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -153,7 +154,7 @@ describe('App e2e', () => {
     describe('Upload avatar', () => {
       it('should upload a profile image', async () => {
         const fileContent = await readFile(
-          '/Users/user/Desktop/THP/projet final/server/api/img/avatar.jpeg',
+          '/Users/user/Desktop/api/img/avatar.jpeg'
         );
 
         return pactum
@@ -170,4 +171,38 @@ describe('App e2e', () => {
       });
     });
   });
+  describe('Gig', () => {
+    describe('Create gig', () => {
+      it('should create a gig with multiple images', async () => {
+        // Подготовка DTO без ключа images
+        const dto = {
+          title: 'I will create a website for you',
+          description: 'I will create a website for you',
+          category: 'Web Development',
+          deliveryTime: 3,
+          revisions: 2,
+          features: ['Responsive Design', 'Source Code'],
+          price: 100,
+          shortDesc: 'I will create a website for you',
+        };
+  
+        // Чтение содержимого файлов (пример для двух файлов)
+        const fileContent1 = await readFile('/Users/user/Desktop/api/img/avatar.jpeg');
+        const fileContent2 = await readFile('/Users/user/Desktop/api/img/avatar.jpeg');
+  
+        // Отправка запроса
+        await pactum
+          .spec()
+          .post('/api/gigs/create') // Укажите ваш URL
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withMultiPartFormData(dto) // Добавление данных гига
+          .withMultiPartFormData('images', fileContent1, { filename: 'image1.jpeg' }) // Для каждого изображения
+          .withMultiPartFormData('images', fileContent2, { filename: 'image2.jpeg' }) // Добавляем отдельно
+          .expectStatus(201);
+      });
+    });
+  });
+  
 });

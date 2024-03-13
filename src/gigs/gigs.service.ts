@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateGigDto } from './dto/create-gig.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class GigsService {
