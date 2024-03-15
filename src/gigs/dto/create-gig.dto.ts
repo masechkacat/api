@@ -33,11 +33,17 @@ export class CreateGigDto {
   @ApiProperty({ type: [String] })
   @IsArray()
   @Transform(
-    ({ value }) => (typeof value === 'string' ? value.split(',') : value),
+    ({ value }) => {
+      if (typeof value === 'string' && value) {
+        return value.split(',');
+      } else if (Array.isArray(value)) {
+        return value;
+      }
+      return undefined;
+    },
     { toClassOnly: true },
   )
-  @IsString({ each: true })
-  features: string[];
+  features?: string[];
 
   @ApiProperty()
   @IsNotEmpty()
@@ -58,5 +64,16 @@ export class CreateGigDto {
     },
     description: 'Images for the gig',
   })
-  images: any[];
+  @Transform(
+    ({ value }) => {
+      if (typeof value === 'string' && value) {
+        return value.split(',');
+      } else if (Array.isArray(value)) {
+        return value;
+      }
+      return undefined;
+    },
+    { toClassOnly: true },
+  )
+  images?: string[];
 }
