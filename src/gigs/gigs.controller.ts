@@ -12,6 +12,7 @@ import {
   Patch,
   Get,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
 import { GigsService } from './gigs.service';
@@ -27,6 +28,7 @@ import {
 import { ValidationExceptionFilter } from './exception-filter/validation-exception.filter';
 import { EditGigDto } from './dto/edit-gig.dto';
 import { ReviewsService } from '../reviews/reviews.service';
+import { SearchGigsDto } from './dto/search-gigs.dto';
 
 @ApiTags('gigs')
 @Controller('gigs')
@@ -107,4 +109,10 @@ export class GigsController {
   ) {
     return this.gigsService.deleteGig(userId, gigId);
   }
+
+@Get('search')
+@ApiOperation({ summary: 'Search gigs' })
+async searchGigs(@Query() searchGigsDto: SearchGigsDto) {
+  return this.gigsService.searchGigs(searchGigsDto);
+}
 }
