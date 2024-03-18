@@ -33,4 +33,55 @@ export class GigsService {
       data: editGigDto,
     });
   }
+
+  async getGigById(gigId: number) {
+    const gig = await this.prisma.gigs.findFirst({
+      where: { id: gigId },
+      include: { createdBy: true },
+    });
+
+    if (gig.createdBy) {
+      delete gig.createdBy.password; // remove password from response
+    }
+
+    return gig;
+  }
+
+  async getAllGigs() {
+    return this.prisma.gigs.findMany({
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getAllGigsByUserId(targetId: number) {
+    return this.prisma.gigs.findMany({
+      where: { userId: targetId },
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            fullName: true,
+            profileImage: true,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteGig(userId: number, gigId: number) {
+    const gig = await this.prisma.gigs.findUnique({ where: { id: gigId } });
+
+    if (!gig || gig.userId !== userId) {
+      throw new ForbiddenException('Access to resources denied');
+    }
+
+    return this.prisma.gigs.delete({ where: { id: gigId } });
+  }
 }
