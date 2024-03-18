@@ -37,12 +37,26 @@ export class GigsService {
   async getGigById(gigId: number) {
     const gig = await this.prisma.gigs.findFirst({
       where: { id: gigId },
-      include: { createdBy: true },
+      include: {
+        reviews: {
+          include: {
+            reviewer: true, // Включаем информацию о рецензенте
+          },
+        },
+        createdBy: true,
+      },
     });
 
     if (gig.createdBy) {
       delete gig.createdBy.password; // remove password from response
     }
+
+    // Remove password from each reviewer
+    gig.reviews.forEach((review) => {
+      if (review.reviewer) {
+        delete review.reviewer.password;
+      }
+    });
 
     return gig;
   }

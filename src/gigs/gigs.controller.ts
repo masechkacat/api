@@ -26,11 +26,15 @@ import {
 } from '@nestjs/swagger';
 import { ValidationExceptionFilter } from './exception-filter/validation-exception.filter';
 import { EditGigDto } from './dto/edit-gig.dto';
+import { ReviewsService } from '../reviews/reviews.service';
 
 @ApiTags('gigs')
 @Controller('gigs')
 export class GigsController {
-  constructor(private readonly gigsService: GigsService) {}
+  constructor(
+    private readonly gigsService: GigsService,
+    private readonly reviewsService: ReviewsService,
+  ) {}
 
   @Post('create')
   @UseGuards(JwtGuard)
@@ -65,7 +69,12 @@ export class GigsController {
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get gig by id' })
   async getGigById(@Param('id', ParseIntPipe) gigId: number) {
-    return this.gigsService.getGigById(gigId);
+    const gig = await this.gigsService.getGigById(gigId);
+    const averageRating =
+      await this.reviewsService.calculateAverageRating(gigId);
+    const totalReviewsCount =
+      await this.reviewsService.totalReviewsCount(gigId);
+    return { ...gig, averageRating, totalReviewsCount };
   }
 
   @Get()
