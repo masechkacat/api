@@ -80,9 +80,9 @@ export class GigsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all gigs' })
-  async getAllGigs() {
-    return this.gigsService.getAllGigs();
+  @ApiOperation({ summary: 'Get all gigs or search gigs' })
+  async getGigs(@Query() searchGigsDto?: SearchGigsDto) {
+    return this.gigsService.getGigs(searchGigsDto);
   }
 
   @Get('user/:id?')
@@ -109,10 +109,4 @@ export class GigsController {
   ) {
     return this.gigsService.deleteGig(userId, gigId);
   }
-
-@Get('search')
-@ApiOperation({ summary: 'Search gigs' })
-async searchGigs(@Query() searchGigsDto: SearchGigsDto) {
-  return this.gigsService.searchGigs(searchGigsDto);
-}
 }

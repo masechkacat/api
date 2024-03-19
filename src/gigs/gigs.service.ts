@@ -62,17 +62,23 @@ export class GigsService {
     return gig;
   }
 
-  async getAllGigs() {
-    return this.prisma.gigs.findMany({
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            fullName: true,
+  // In GigsService
+  async getGigs(searchGigsDto?: SearchGigsDto) {
+    if (searchGigsDto) {
+      const query = this.createSearchQuery(searchGigsDto);
+      return this.prisma.gigs.findMany(query);
+    } else {
+      return this.prisma.gigs.findMany({
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              fullName: true,
+            },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   async getAllGigsByUserId(targetId: number) {
@@ -100,35 +106,36 @@ export class GigsService {
     return this.prisma.gigs.delete({ where: { id: gigId } });
   }
 
-async searchGigs(searchGigsDto: SearchGigsDto) {
-  const query = this.createSearchQuery(searchGigsDto);
-  return this.prisma.gigs.findMany(query);
-}
-
-private createSearchQuery({ searchTerm, category }: SearchGigsDto) {
-  const query = {
-    where: {
-      OR: [],
-    },
-    include: {
-      reviews: {
-        include: {
-          reviewer: true,
+  private createSearchQuery({ searchTerm, category }: SearchGigsDto) {
+    const query: { where: any; include: any } = {
+      where: {},
+      include: {
+        reviews: {
+          include: {
+            reviewer: true,
+          },
         },
+        createdBy: true,
       },
-      createdBy: true,
-    },
-  };
-  if (searchTerm) {
-    query.where.OR.push({
-      title: { contains: searchTerm, mode: "insensitive" },
-    });
+    };
+
+    const orConditions = [];
+
+    if (searchTerm) {
+      orConditions.push({
+        title: { contains: searchTerm, mode: 'insensitive' },
+      });
+    }
+    if (category) {
+      orConditions.push({
+        category: { contains: category, mode: 'insensitive' },
+      });
+    }
+
+    if (orConditions.length) {
+      query.where.OR = orConditions;
+    }
+
+    return query;
   }
-  if (category) {
-    query.where.OR.push({
-      category: { contains: category, mode: "insensitive" },
-    });
-  }
-  return query;
-}
 }
