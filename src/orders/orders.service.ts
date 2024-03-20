@@ -59,6 +59,15 @@ export class OrdersService {
     };
   }
 
+  async getOrderWithGig(orderId: number) {
+    return await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: {
+        gig: true,
+      },
+    });
+  }
+
   async confirmOrder(paymentIntent: string) {
     try {
       await this.prisma.orders.update({
@@ -100,5 +109,14 @@ export class OrdersService {
     } catch (error) {
       throw new InternalServerErrorException('Failed to get seller orders');
     }
+  }
+
+  async isUserRelatedToOrder(
+    userId: number,
+    orderId: number,
+  ): Promise<boolean> {
+    const order = await this.getOrderWithGig(orderId);
+
+    return order?.buyerId === userId || order?.gig.userId === userId;
   }
 }

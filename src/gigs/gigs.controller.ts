@@ -98,7 +98,7 @@ export class GigsController {
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Get all gigs by user id or current user if id is not provided',
+    summary: 'Get all gigs by user id',
   })
   async getAllGigsByUserId(@Param('id', ParseIntPipe) id: number) {
     return this.gigsService.getAllGigsByUserId(id);
