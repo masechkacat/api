@@ -74,6 +74,7 @@ export class GigsService {
             select: {
               id: true,
               fullName: true,
+              profileImage: true,
             },
           },
         },

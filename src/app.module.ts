@@ -7,6 +7,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { MessageModule } from './message/message.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigModule } from '@nestjs/config';
     ReviewsModule,
     MessageModule,
     PrismaModule,
+    StripeModule,
   ],
 })
 export class AppModule {}

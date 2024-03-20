@@ -1,0 +1,5 @@
+DATABASE_URL="postgresql://postgres:admin@localhost:5432/sfd?schema=public"
+JWT_SECRET="mysecret"
+HOST="http://localhost"
+PORT=3333
+STRIPE_API_KEY="sk_f4d454d54..."
