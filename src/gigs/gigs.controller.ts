@@ -85,18 +85,23 @@ export class GigsController {
     return this.gigsService.getGigs(searchGigsDto);
   }
 
-  @Get('user/:id?')
+  @Get('user/me')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get all gigs by current user' })
+  async getAllGigsByCurrentUser(@GetUser('id') userId: number) {
+    console.log(userId);
+    return this.gigsService.getAllGigsByUserId(userId);
+  }
+
+  @Get('user/:id')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Get all gigs by user id or current user if id is not provided',
   })
-  async getAllGigsByUserId(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') userId: number,
-  ) {
-    const targetId = id ?? userId;
-    return this.gigsService.getAllGigsByUserId(targetId);
+  async getAllGigsByUserId(@Param('id', ParseIntPipe) id: number) {
+    return this.gigsService.getAllGigsByUserId(id);
   }
 
   @Delete(':id')

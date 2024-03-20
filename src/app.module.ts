@@ -8,6 +8,7 @@ import { MessageModule } from './message/message.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { StripeModule } from './stripe/stripe.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { StripeModule } from './stripe/stripe.module';
     MessageModule,
     PrismaModule,
     StripeModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
