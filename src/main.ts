@@ -7,6 +7,9 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const port = process.env.PORT || 3000;
+
   const config = new DocumentBuilder()
     .setTitle('NestJS API for SpotForDev')
     .setDescription('This is the API for the SpotForDev application')
@@ -20,7 +23,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -36,6 +39,6 @@ async function bootstrap() {
     }),
   );
   app.use('/uploads', express.static('uploads'));
-  await app.listen(3333);
+  await app.listen(port, () => console.log(`Application is running on: ${port}`));
 }
 bootstrap();
