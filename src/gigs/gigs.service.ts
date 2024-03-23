@@ -3,21 +3,25 @@ import { CreateGigDto } from './dto/create-gig.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditGigDto } from './dto/edit-gig.dto';
 import { SearchGigsDto } from './dto/search-gigs.dto';
+import { S3ServerService } from 'src/s3-server/s3-server.service';
 
 @Injectable()
 export class GigsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private s3ServerService: S3ServerService) {}
 
   async createGig(
     userId: number,
     createGigDto: CreateGigDto,
-    fileNames: string[],
+    fileNames: Array<Express.Multer.File>,
   ) {
+
+    const fileUrls = await this.s3ServerService.uploadFiles(fileNames);
+
     return this.prisma.gigs.create({
       data: {
         userId,
         ...createGigDto,
-        images: fileNames,
+        images: fileUrls,
       },
     });
   }

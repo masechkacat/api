@@ -25,7 +25,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { ValidationExceptionFilter } from './exception-filter/validation-exception.filter';
 import { EditGigDto } from './dto/edit-gig.dto';
 import { ReviewsService } from '../reviews/reviews.service';
 import { SearchGigsDto } from './dto/search-gigs.dto';
@@ -42,7 +41,6 @@ export class GigsController {
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
   @UseInterceptors(FilesInterceptor('images', 4))
-  @UseFilters(new ValidationExceptionFilter())
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create gig' })
   async createGig(
@@ -50,8 +48,7 @@ export class GigsController {
     @Body() createGigDto: CreateGigDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
   ) {
-    const fileNames = images.map((file) => file.filename);
-    return this.gigsService.createGig(userId, createGigDto, fileNames);
+    return this.gigsService.createGig(userId, createGigDto, images);
   }
 
   @Patch(':id')

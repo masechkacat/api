@@ -8,6 +8,7 @@ import { MessageModule } from './message/message.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { S3ServerModule } from './s3-server/s3-server.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     MessageModule,
     PrismaModule,
     DashboardModule,
+    S3ServerModule,
   ],
 })
 export class AppModule {}

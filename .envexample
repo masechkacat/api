@@ -3,3 +3,7 @@ JWT_SECRET="mysecret"
 HOST="http://localhost"
 PORT=3333
 STRIPE_API_KEY="sk_f4d454d54..."
+AWS_SECRET_ACCESS_KEY = "jhfjf..."
+AWS_ACCESS_KEY_ID = "AK..."
+AWS_REGION = "eu-west-3"
+AWS_BUCKET_NAME = "bucket"
