@@ -30,20 +30,18 @@ export class ReviewsService {
     return review;
   }
 
-  async calculateAverageRating(gigId: number): Promise<number> {
-    const reviews = await this.prisma.reviews.findMany({
+  async getRatingData(gigId: number): Promise<{averageRating: number, totalReviewsCount: number}> {
+    const result = await this.prisma.reviews.aggregate({
       where: { gigId },
+      _avg: {
+        rating: true,
+      },
+      _count: true,
     });
-
-    const averageRating =
-      reviews.reduce((acc, review) => acc + review.rating, 0) /
-        reviews.length || 0;
-    return parseFloat(averageRating.toFixed(1));
-  }
-
-  async totalReviewsCount(gigId: number): Promise<number> {
-    return this.prisma.reviews.count({
-      where: { gigId },
-    });
+  
+    const averageRating = parseFloat((result._avg.rating || 0).toFixed(1));
+    const totalReviewsCount = result._count;
+  
+    return { averageRating, totalReviewsCount };
   }
 }

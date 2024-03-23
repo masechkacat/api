@@ -3,11 +3,16 @@ import { CreateGigDto } from './dto/create-gig.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditGigDto } from './dto/edit-gig.dto';
 import { SearchGigsDto } from './dto/search-gigs.dto';
-import { S3ServerService } from 'src/s3-server/s3-server.service';
+import { S3ServerService } from '../s3-server/s3-server.service';
+import { ReviewsService } from '../reviews/reviews.service';
 
 @Injectable()
 export class GigsService {
-  constructor(private prisma: PrismaService, private s3ServerService: S3ServerService) {}
+  constructor(
+    private prisma: PrismaService,
+    private s3ServerService: S3ServerService,
+    private reviewsService: ReviewsService,
+  ) {}
 
   async createGig(
     userId: number,
@@ -40,7 +45,7 @@ export class GigsService {
   }
 
   async getGigById(gigId: number) {
-    const gig = await this.prisma.gigs.findFirst({
+    let gig = await this.prisma.gigs.findFirst({
       where: { id: gigId },
       include: {
         reviews: {
@@ -63,32 +68,19 @@ export class GigsService {
       }
     });
 
+    const ratingData = await this.reviewsService.getRatingData(gigId);
+    gig = { ...gig, ...ratingData };
+
     return gig;
   }
 
-  // In GigsService
   async getGigs(searchGigsDto?: SearchGigsDto) {
-    if (searchGigsDto) {
-      const query = this.createSearchQuery(searchGigsDto);
-      return this.prisma.gigs.findMany(query);
-    } else {
-      return this.prisma.gigs.findMany({
-        include: {
-          createdBy: {
-            select: {
-              id: true,
-              fullName: true,
-              profileImage: true,
-            },
-          },
-        },
-      });
-    }
-  }
-
-  async getAllGigsByUserId(targetId: number) {
-    return this.prisma.gigs.findMany({
-      where: { userId: targetId },
+  let gigs;
+  if (searchGigsDto) {
+    const query = this.createSearchQuery(searchGigsDto);
+    gigs = await this.prisma.gigs.findMany(query);
+  } else {
+    gigs = await this.prisma.gigs.findMany({
       include: {
         createdBy: {
           select: {
@@ -100,6 +92,36 @@ export class GigsService {
       },
     });
   }
+
+  gigs = await Promise.all(gigs.map(async gig => {
+    const ratingData = await this.reviewsService.getRatingData(gig.id);
+    return { ...gig, ...ratingData };
+  }));
+
+  return gigs;
+}
+
+async getAllGigsByUserId(userId: number) {
+  let gigs = await this.prisma.gigs.findMany({
+    where: { userId: userId },
+    include: {
+      createdBy: {
+        select: {
+          id: true,
+          fullName: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
+
+  gigs = await Promise.all(gigs.map(async gig => {
+    const ratingData = await this.reviewsService.getRatingData(gig.id);
+    return { ...gig, ...ratingData };
+  }));
+
+  return gigs;
+}
 
   async deleteGig(userId: number, gigId: number) {
     const gig = await this.prisma.gigs.findUnique({ where: { id: gigId } });
