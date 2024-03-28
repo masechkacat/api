@@ -30,13 +30,13 @@ export class OrdersController {
 
   @Get('buyer')
   @ApiOperation({ summary: 'Get buyer orders' })
-  async getBuyerOrders(@GetUser() userId: number) {
+  async getBuyerOrders(@GetUser('id') userId: number) {
     return this.ordersService.getBuyerOrders(userId);
   }
 
   @Get('seller')
   @ApiOperation({ summary: 'Get seller orders' })
-  async getSellerOrders(@GetUser() userId: number) {
+  async getSellerOrders(@GetUser('id') userId: number) {
     return this.ordersService.getSellerOrders(userId);
   }
 }
