@@ -17,7 +17,7 @@ export class OrdersController {
   @ApiOperation({ summary: 'Create order' })
   async createOrder(
     @Body() createOrderDto: CreateOrderDto,
-    @GetUser() userId: number,
+    @GetUser('id') userId: number,
   ) {
     return this.ordersService.createOrder(createOrderDto.gigId, userId);
   }
