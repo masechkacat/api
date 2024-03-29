@@ -115,8 +115,14 @@ export class OrdersService {
     userId: number,
     orderId: number,
   ): Promise<boolean> {
-    const order = await this.getOrderWithGig(orderId);
-
+    const order = await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: {
+        gig: true,
+        buyer: true,
+      },
+    });
+  
     return order?.buyerId === userId || order?.gig.userId === userId;
   }
 }

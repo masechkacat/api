@@ -14,6 +14,23 @@ export class GigsService {
     private reviewsService: ReviewsService,
   ) {}
 
+  removePasswordFromUser(user: any) {
+    if (user) {
+      delete user.password;
+    }
+  }
+
+  removePasswords(gigs: any[]) {
+    gigs.forEach(gig => {
+      this.removePasswordFromUser(gig.createdBy);
+      gig.reviews.forEach(review => {
+        this.removePasswordFromUser(review.reviewer);
+      });
+    });
+    return gigs;
+  }
+
+
   async createGig(
     userId: number,
     createGigDto: CreateGigDto,
@@ -57,16 +74,7 @@ export class GigsService {
       },
     });
 
-    if (gig.createdBy) {
-      delete gig.createdBy.password; // remove password from response
-    }
-
-    // Remove password from each reviewer
-    gig.reviews.forEach((review) => {
-      if (review.reviewer) {
-        delete review.reviewer.password;
-      }
-    });
+    this.removePasswords([gig]); // Так как gig не массив, оборачиваем его в массив
 
     const ratingData = await this.reviewsService.getRatingData(gigId);
     gig = { ...gig, ...ratingData };
@@ -75,7 +83,7 @@ export class GigsService {
   }
 
   async getGigs(searchGigsDto?: SearchGigsDto) {
-  let gigs;
+  let gigs: any[];
   if (searchGigsDto) {
     const query = this.createSearchQuery(searchGigsDto);
     gigs = await this.prisma.gigs.findMany(query);
@@ -98,7 +106,7 @@ export class GigsService {
     return { ...gig, ...ratingData };
   }));
 
-  return gigs;
+  return this.removePasswords(gigs);
 }
 
 async getAllGigsByUserId(userId: number) {
