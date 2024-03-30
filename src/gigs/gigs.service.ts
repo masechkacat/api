@@ -141,6 +141,17 @@ async getAllGigsByUserId(userId: number) {
     return this.prisma.gigs.delete({ where: { id: gigId } });
   }
 
+  async checkOrder(userId: number, gigId: number): Promise<boolean> {
+    const order = await this.prisma.orders.findFirst({
+      where: {
+        buyerId: userId,
+        gigId: gigId,
+        isCompleted: true,
+      },
+    });
+    return !!order;
+  }
+
   private createSearchQuery({ searchTerm, category }: SearchGigsDto) {
     const query: { where: any; include: any } = {
       where: {},

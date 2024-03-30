@@ -81,7 +81,6 @@ export class GigsController {
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all gigs by current user' })
   async getAllGigsByCurrentUser(@GetUser('id') userId: number) {
-    console.log(userId);
     return this.gigsService.getAllGigsByUserId(userId);
   }
 
@@ -94,6 +93,18 @@ export class GigsController {
   async getAllGigsByUserId(@Param('id', ParseIntPipe) id: number) {
     return this.gigsService.getAllGigsByUserId(id);
   }
+
+  @Get('checkOrder/:gigId')
+@UseGuards(JwtGuard)
+@ApiBearerAuth('access-token')
+@ApiOperation({ summary: 'Check if the current user has ordered the gig' })
+async checkGigOrder(
+  @GetUser('id') userId: number,
+  @Param('gigId', ParseIntPipe) gigId: number,
+): Promise<{ hasUserOrderedGig: boolean }> {
+  const hasUserOrderedGig = await this.gigsService.checkOrder(userId, gigId);
+  return { hasUserOrderedGig };
+}
 
   @Delete(':id')
   @UseGuards(JwtGuard)
