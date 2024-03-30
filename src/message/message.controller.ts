@@ -18,6 +18,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 @UseGuards(JwtGuard)
@@ -52,6 +53,7 @@ export class MessageController {
   }
 
   @ApiOperation({ summary: 'Get unread messages for a user, optionally filtered by order' })
+  @ApiQuery({ name: 'orderId', required: false })
   @Get('unread')
   async getUnreadMessages(
     @GetUser('id') userId: number,
