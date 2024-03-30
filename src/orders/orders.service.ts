@@ -112,17 +112,21 @@ export class OrdersService {
   }
 
   async isUserRelatedToOrder(
-    userId: number,
     orderId: number,
+    userId: number,
   ): Promise<boolean> {
-    const order = await this.prisma.orders.findUnique({
-      where: { id: orderId },
-      include: {
-        gig: true,
-        buyer: true,
-      },
-    });
-  
-    return order?.buyerId === userId || order?.gig.userId === userId;
+    try {
+      const order = await this.prisma.orders.findUnique({
+        where: { id: orderId },
+        include: {
+          gig: true,
+          buyer: true,
+        },
+      });
+      return order?.buyerId === userId || order?.gig.userId === userId;
+    } catch (error) {
+      console.error('Error fetching order:', error);
+      throw error;
+    }
   }
 }
