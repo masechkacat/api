@@ -83,11 +83,7 @@ export class MessageService {
       where: whereClause,
       include: { sender: true },
     });
-  
-    if (messages.length === 0) {
-      throw new NotFoundException('No unread messages found.');
-    }
-  
+    
     return messages;
   }
   
