@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
@@ -50,11 +51,15 @@ export class MessageController {
     return this.messageService.getMessages(orderId, userId);
   }
 
-  @ApiOperation({ summary: 'Get unread messages for a user' })
+  @ApiOperation({ summary: 'Get unread messages for a user, optionally filtered by order' })
   @Get('unread')
-  async getUnreadMessages(@GetUser('id') userId: number) {
-    return this.messageService.getUnreadMessages(userId);
+  async getUnreadMessages(
+    @GetUser('id') userId: number,
+    @Query('orderId') orderId?: string,
+  ) {
+    return this.messageService.getUnreadMessages(userId, orderId ? Number(orderId) : undefined);
   }
+  
 
   @ApiOperation({ summary: 'Mark a message as read' })
   @ApiParam({ name: 'messageId', type: 'number' })

@@ -72,16 +72,25 @@ export class MessageService {
     return { messages, recipientId };
   }
 
-  async getUnreadMessages(userId: number) {
+  async getUnreadMessages(userId: number, orderId?: number) {
+    const whereClause = {
+      recipientId: userId,
+      isRead: false,
+      ...(orderId ? { orderId } : {}),
+    };
+  
     const messages = await this.prisma.message.findMany({
-      where: { recipientId: userId, isRead: false },
+      where: whereClause,
       include: { sender: true },
     });
+  
     if (messages.length === 0) {
       throw new NotFoundException('No unread messages found.');
     }
+  
     return messages;
   }
+  
 
   async markAsRead(messageId: number) {
     const updateResponse = await this.prisma.message.updateMany({
